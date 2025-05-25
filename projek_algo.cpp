@@ -190,6 +190,32 @@ void muatDariFile() {
     fclose(file);
 }
 
+void urutkanAscending() {
+    if (listKosong()) return;
+
+    Node *i, *j;
+    for (i = awal; i != NULL; i = i->next) {
+        for (j = i->next; j != NULL; j = j->next) {
+            if (i->info.nama > j->info.nama) {
+                swap(i->info, j->info);
+            }
+        }
+    }
+}
+
+void urutkanDescending() {
+    if (listKosong()) return;
+
+    Node *i, *j;
+    for (i = awal; i != NULL; i = i->next) {
+        for (j = i->next; j != NULL; j = j->next) {
+            if (i->info.nama < j->info.nama) {
+                swap(i->info, j->info);
+            }
+        }
+    }
+}
+
 int main(){
     int pilihMenu, adminInput;
     string nama, noTel;
@@ -233,7 +259,7 @@ int main(){
         cout << " 4. Edit kontak\n";
         cout << " 5. Hapus kontak\n";
         cout << " 6. Urutkan kontak\n";
-        cout << " 6. Keluar\n";
+        cout << " 7. Keluar\n";
         cout << "===========================\n";
         cout << " Pilih menu: ";
         cin >> pilihMenu;
@@ -286,6 +312,33 @@ int main(){
                 break;
 
             case 6:
+                int pilihSort;
+                cout << "===========================\n";
+                cout << "     Metode Pengurutan\n";
+                cout << "===========================\n";
+                cout << "1. Ascending\n";
+                cout << "2. Descending\n";
+                cout << "Pilih: ";
+                cin >> pilihSort;
+                cin.ignore();
+
+                system("cls");  
+
+                if (pilihSort == 1) {
+                    urutkanAscending();
+                    cout << "Kontak telah diurutkan secara ascending.\n";
+                } else if (pilihSort == 2) {
+                    urutkanDescending();
+                    cout << "Kontak telah diurutkan secara descending.\n";
+                } else {
+                    cout << "Pilihan tidak valid\n";
+                    break;
+                }
+                tampilkanKontak();
+                simpanKeFile();
+                break;
+
+            case 7:
                 simpanKeFile();
                 cout << "Terima kasih telah menggunakan program ini!\n";
                 return 0;
