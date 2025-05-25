@@ -232,6 +232,7 @@ int main(){
         cout << " 3. Cari kontak\n";
         cout << " 4. Edit kontak\n";
         cout << " 5. Hapus kontak\n";
+        cout << " 6. Urutkan kontak\n";
         cout << " 6. Keluar\n";
         cout << "===========================\n";
         cout << " Pilih menu: ";
