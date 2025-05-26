@@ -47,7 +47,7 @@ void registerAdmin()
 
 string login(int adminInput)
 {
-    FILE *file = fopen("admin.dat", "rb");
+    FILE *file = fopen("admin.dat", "r");
     if (!file)
     {
         cout << "File admin tidak ditemukan.\n";
