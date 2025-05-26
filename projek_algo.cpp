@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdio.h>
+#include <iomanip>
 using namespace std;
 
 struct admin
@@ -124,18 +125,19 @@ void tampilkanKontak()
     }
     else
     {
-        cout << "===========================\n";
-        cout << "       Daftar Kontak       \n";
-        cout << "===========================\n";
+        cout << "==============================================\n";
+        cout << "               Daftar Kontak                   \n";
+        cout << "==============================================\n";
+        cout << left << setw(30) << "Nama" << " | " << setw(15) << "No. Telepon" << endl;
+        cout << "----------------------------------------------\n";
+
         bantu = awal;
         while (bantu != NULL)
         {
-            cout << "Nama     : " << bantu->info.nama << endl;
-            cout << "No. Telp : " << bantu->info.noTel << endl;
-            cout << "---------------------------\n";
+            cout << left << setw(30) << bantu->info.nama << " | " << setw(15) << bantu->info.noTel << endl;
             bantu = bantu->next;
         }
-        cout << "===========================\n";
+        cout << "==============================================\n";
     }
 }
 
@@ -490,6 +492,7 @@ int main()
                 } while (!validNoTel(noTel));
 
                 tambahKontak(nama, noTel);
+                cout << "Kontak berhasil ditambahkan!\n";
                 tambahKeFile();
                 cout << endl;
             }
