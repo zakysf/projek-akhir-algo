@@ -2,58 +2,108 @@
 #include <stdio.h>
 using namespace std;
 
-struct Kontak {
+struct admin
+{
+    string nama;
+    int pin;
+};
+
+struct Kontak
+{
     string nama;
     string noTel;
 };
 
-struct Node {
+struct Node
+{
+    admin infoAdmin;
     Kontak info;
     Node *prev, *next;
 };
 
 Node *awal, *akhir, *bantu, *list, *NB;
 
-bool login(int adminInput){
-    FILE* pin = fopen("admin.dat", "rb");
-    if (!pin) {
-        cout << "File admin tidak ditemukan";
-        return false;
+void registerAdmin()
+{
+    admin newAdmin;
+    cout << "Masukkan nama admin: ";
+    getline(cin, newAdmin.nama);
+    cout << "Masukkan PIN (angka): ";
+    cin >> newAdmin.pin;
+    cin.ignore();
+
+    FILE *file = fopen("admin.dat", "ab");
+    if (!file)
+    {
+        cout << "File admin tidak ditemukan\n";
+        return;
     }
 
-    int adminAsli;
-    fscanf(pin, "%d", &adminAsli);
-    fclose(pin);
-
-    return (adminAsli == adminInput);
+    fprintf(file, "%s|%d\n", newAdmin.nama.c_str(), newAdmin.pin);
+    fclose(file);
+    cout << "Admin berhasil diregistrasi!\n";
 }
 
-void listBaru(){
+string login(int adminInput)
+{
+    FILE *file = fopen("admin.dat", "rb");
+    if (!file)
+    {
+        cout << "File admin tidak ditemukan.\n";
+        return "";
+    }
+
+    char nama[100];
+    int pin;
+
+    while (fscanf(file, " %99[^|]|%d\n", nama, &pin) == 2)
+    {
+        if (adminInput == pin)
+        {
+            fclose(file);
+            return string(nama); // return nama admin
+        }
+    }
+
+    fclose(file);
+    return "";
+}
+
+void listBaru()
+{
     list = NULL;
     awal = list;
     akhir = list;
 }
 
-int listKosong(){
+int listKosong()
+{
     return (awal == NULL);
 }
 
-void tambahKontak(string& namaBaru, string& noTelBaru){
+void tambahKontak(string namaBaru, string noTelBaru)
+{
     NB = new Node;
     NB->info.nama = namaBaru;
     NB->info.noTel = noTelBaru;
     NB->next = NULL;
     NB->prev = NULL;
 
-    if (listKosong()){
+    if (listKosong())
+    {
         awal = akhir = NB;
-    } else if (awal->info.nama >= namaBaru){
+    }
+    else if (awal->info.nama >= namaBaru)
+    {
         NB->next = awal;
         awal->prev = NB;
         awal = NB;
-    } else {
+    }
+    else
+    {
         bantu = awal;
-        while (bantu->next != NULL && bantu->next->info.nama < namaBaru){
+        while (bantu->next != NULL && bantu->next->info.nama < namaBaru)
+        {
             bantu = bantu->next;
         }
         NB->next = bantu->next;
@@ -66,15 +116,20 @@ void tambahKontak(string& namaBaru, string& noTelBaru){
     }
 }
 
-void tampilkanKontak(){
-    if (listKosong()){
+void tampilkanKontak()
+{
+    if (listKosong())
+    {
         cout << "Tidak ada kontak yang tersimpan!" << endl;
-    } else {
+    }
+    else
+    {
         cout << "===========================\n";
         cout << "       Daftar Kontak       \n";
         cout << "===========================\n";
         bantu = awal;
-        while (bantu != NULL){
+        while (bantu != NULL)
+        {
             cout << "Nama     : " << bantu->info.nama << endl;
             cout << "No. Telp : " << bantu->info.noTel << endl;
             cout << "---------------------------\n";
@@ -84,15 +139,21 @@ void tampilkanKontak(){
     }
 }
 
-void cariData(string cariNama){
+void cariData(string cariNama)
+{
     bool ketemu = false;
     bantu = awal;
 
-    if (listKosong()){
+    if (listKosong())
+    {
         cout << "Tidak ada kontak yang tersimpan!" << endl;
-    } else {
-        while (bantu != NULL){
-            if (bantu->info.nama == cariNama){
+    }
+    else
+    {
+        while (bantu != NULL)
+        {
+            if (bantu->info.nama == cariNama)
+            {
                 ketemu = true;
                 cout << "Nama Kontak : " << bantu->info.nama << endl;
                 cout << "No Telepon  : " << bantu->info.noTel << endl;
@@ -100,59 +161,84 @@ void cariData(string cariNama){
             }
             bantu = bantu->next;
         }
-        if (!ketemu){
+        if (!ketemu)
+        {
             cout << "Data tidak ditemukan\n";
         }
     }
 }
 
-void hapusKontak(string namaHapus, bool silent = false){
-    if (listKosong()) {
-        if (!silent) cout << "Tidak ada kontak yang tersimpan!" << endl;
+void hapusKontak(string namaHapus, bool silent = false)
+{
+    if (listKosong())
+    {
+        if (!silent)
+            cout << "Tidak ada kontak yang tersimpan!" << endl;
         return;
     }
 
     bantu = awal;
-    while (bantu != NULL && bantu->info.nama != namaHapus) {
+    while (bantu != NULL && bantu->info.nama != namaHapus)
+    {
         bantu = bantu->next;
     }
 
-    if (bantu == NULL) {
-        if (!silent) cout << "Kontak tidak ditemukan!" << endl;
+    if (bantu == NULL)
+    {
+        if (!silent)
+            cout << "Kontak tidak ditemukan!" << endl;
         return;
     }
 
-    if (bantu == awal && bantu == akhir) {
+    if (bantu == awal && bantu == akhir)
+    {
         awal = akhir = NULL;
-    } else if (bantu == awal) {
+    }
+    else if (bantu == awal)
+    {
         awal = bantu->next;
-        if (awal) awal->prev = NULL;
-    } else if (bantu == akhir) {
+        if (awal)
+            awal->prev = NULL;
+    }
+    else if (bantu == akhir)
+    {
         akhir = bantu->prev;
-        if (akhir) akhir->next = NULL;
-    } else {
+        if (akhir)
+            akhir->next = NULL;
+    }
+    else
+    {
         bantu->prev->next = bantu->next;
         bantu->next->prev = bantu->prev;
     }
 
     delete bantu;
-    if (!silent) {
+    if (!silent)
+    {
         cout << "Kontak berhasil dihapus!" << endl;
     }
 }
 
-void editKontak(string& namaCari, string& namaBaru, string& noTelBaru){
+void editKontak(string namaCari, string namaBaru, string noTelBaru)
+{
     system("cls");
-    if (listKosong()){
+    if (listKosong())
+    {
         cout << "Tidak ada kontak yang tersimpan" << endl;
-    } else {
+    }
+    else
+    {
         bantu = awal;
-        while (bantu != NULL && bantu->info.nama != namaCari){
+        while (bantu != NULL && bantu->info.nama != namaCari)
+        {
             bantu = bantu->next;
         }
-        if (bantu == NULL){
+        if (bantu == NULL)
+        {
             cout << "Kontak tidak ditemukan" << endl;
-        } else {
+        }
+        else
+        {
             hapusKontak(namaCari, true);
             tambahKontak(namaBaru, noTelBaru);
             cout << "Kontak berhasil diedit" << endl;
@@ -160,15 +246,18 @@ void editKontak(string& namaCari, string& namaBaru, string& noTelBaru){
     }
 }
 
-void simpanKeFile() {
-    FILE* file = fopen("kontak.txt", "w");
-    if (!file) {
+void simpanKeFile()
+{
+    FILE *file = fopen("kontak.txt", "w");
+    if (!file)
+    {
         cout << "Gagal menyimpan ke file\n";
         return;
     }
 
     bantu = awal;
-    while (bantu != NULL) {
+    while (bantu != NULL)
+    {
         fprintf(file, "%s | %s\n", bantu->info.nama.c_str(), bantu->info.noTel.c_str());
         bantu = bantu->next;
     }
@@ -176,12 +265,34 @@ void simpanKeFile() {
     fclose(file);
 }
 
-void muatDariFile() {
-    FILE* file = fopen("kontak.txt", "r");
-    if (!file) return;
+void tambahKeFile()
+{
+    FILE *file = fopen("kontak.txt", "a");
+    if (!file)
+    {
+        cout << "Gagal menyimpan ke file\n";
+        return;
+    }
 
-    char nama[100], noTel[100];
-    while (fscanf(file, " %99[^|] | %99[^\n]\n", nama, noTel) == 2) {
+    bantu = awal;
+    while (bantu != NULL)
+    {
+        fprintf(file, "%s | %s\n", bantu->info.nama.c_str(), bantu->info.noTel.c_str());
+        bantu = bantu->next;
+    }
+
+    fclose(file);
+}
+
+void muatDariFile()
+{
+    FILE *file = fopen("kontak.txt", "r");
+    if (!file)
+        return;
+
+    char nama[100], noTel[13];
+    while (fscanf(file, " %99[^|] | %12[^\n]\n", nama, noTel) == 2)
+    {
         string namaStr(nama);
         string noTelStr(noTel);
         tambahKontak(namaStr, noTelStr);
@@ -190,68 +301,158 @@ void muatDariFile() {
     fclose(file);
 }
 
-void urutkanAscending() {
-    if (listKosong()) return;
+void urutkanAscending()
+{
+    if (listKosong())
+        return;
 
     Node *i, *j;
-    for (i = awal; i != NULL; i = i->next) {
-        for (j = i->next; j != NULL; j = j->next) {
-            if (i->info.nama > j->info.nama) {
+    for (i = awal; i != NULL; i = i->next)
+    {
+        for (j = i->next; j != NULL; j = j->next)
+        {
+            if (i->info.nama > j->info.nama)
+            {
                 swap(i->info, j->info);
             }
         }
     }
+    cout << "Kontak telah diurutkan secara ascending.\n";
 }
 
-void urutkanDescending() {
-    if (listKosong()) return;
+void urutkanDescending()
+{
+    if (listKosong())
+        return;
 
     Node *i, *j;
-    for (i = awal; i != NULL; i = i->next) {
-        for (j = i->next; j != NULL; j = j->next) {
-            if (i->info.nama < j->info.nama) {
+    for (i = awal; i != NULL; i = i->next)
+    {
+        for (j = i->next; j != NULL; j = j->next)
+        {
+            if (i->info.nama < j->info.nama)
+            {
                 swap(i->info, j->info);
             }
         }
     }
+    cout << "Kontak telah diurutkan secara descending.\n";
 }
 
-int main(){
-    int pilihMenu, adminInput;
+bool validNoTel(string noTel)
+{
+    if (noTel.length() > 12)
+        return false;
+
+    for (int i = 0; i < (int)noTel.length(); i++)
+    {
+        char c = noTel[i];
+        if (!(c >= '0' && c <= '9'))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
+int main()
+{
+    int pilihMenu, adminInput, pilihMenuAwal;
+    string namaAdminLogin;
     string nama, noTel;
     string cariKontak;
     string namaCari, namaBaru, noTelBaru;
+    bool berhasilLogin = false;
 
     cout << "===========================================\n";
     cout << "  Selamat Datang di Menu Manajemen Kontak\n";
     cout << "===========================================\n";
+    cout << " 1. Login\n";
+    cout << " 2. Register\n";
+    cout << " 3. Keluar\n";
+    cout << "===========================================\n";
+    cout << " Pilihan anda: ";
+    cin >> pilihMenuAwal;
+    cin.ignore();
 
-    bool berhasilLogin = false;
-    for (int i = 0; i < 3; i++) {
-        cout << "Masukkan PIN anda (angka): "; // jika 3 kali salah maka program berhenti
-        cin >> adminInput;
-        cin.ignore();
+    switch (pilihMenuAwal)
+    {
+    case 1:
+        for (int i = 0; i < 3; i++)
+        {
+            cout << "Masukkan PIN anda (angka): ";
+            cin >> adminInput;
+            cin.ignore();
 
-        if (!login(adminInput)) {
-            cout << "PIN Salah\n";
-        } else {
-            berhasilLogin = true;
-            break;
+            namaAdminLogin = login(adminInput);
+            if (namaAdminLogin == "")
+            {
+                cout << "PIN Salah\n";
+            }
+            else
+            {
+                berhasilLogin = true;
+                break;
+            }
         }
-    }
+        if (!berhasilLogin)
+        {
+            cout << "Login gagal\n";
+            return 0;
+        } else{
+            break; // Keluar dari loop untuk masuk ke menu utama
+        }
+        break;
 
-    if (!berhasilLogin) {
-        cout << "Login gagal\n";
+    case 2:
+        registerAdmin();
+        for (int i = 0; i < 3; i++)
+        {
+            cout << "Masukkan PIN anda (angka): ";
+            cin >> adminInput;
+            cin.ignore();
+
+            namaAdminLogin = login(adminInput);
+            if (namaAdminLogin == "")
+            {
+                cout << "PIN Salah\n";
+            }
+            else
+            {
+                berhasilLogin = true;
+                break;
+            }
+        }
+
+        if (!berhasilLogin)
+        {
+            cout << "Login gagal\n";
+            return 0;
+        }
+        else
+        {
+            break; // Keluar dari loop untuk masuk ke menu utama
+        }
+        break;
+
+    case 3:
+        cout << "Keluar dari program.\n";
+        return 0;
+
+    default:
+        cout << "Pilihan tidak valid.\n";
         return 0;
     }
 
     listBaru();
     muatDariFile();
 
-    while (true){
+    while (true)
+    {
         system("cls");
         cout << "===========================\n";
         cout << "   Menu Manajemen Kontak\n";
+        cout << "   Admin: " << namaAdminLogin << endl;
         cout << "===========================\n";
         cout << " 1. Tambah kontak\n";
         cout << " 2. Tampilkan semua kontak\n";
@@ -266,86 +467,107 @@ int main(){
         cin.ignore();
         system("cls");
 
-        switch (pilihMenu){
-            case 1:
-                int jmlInput;
-                cout << "Masukkan jumlah kontak yang ingin ditambahkan: ";
-                cin >> jmlInput;
-                cin.ignore();
-                for (int i = 0; i < jmlInput; i++) {
-                    cout << "Masukkan nama kontak ke-" << (i+1) << ": ";
-                    getline(cin, nama);
-                    cout << "Masukkan nomor kontak ke-" << (i+1) << ": ";
-                    getline(cin, noTel);
-                    tambahKontak(nama, noTel);
-                    simpanKeFile();
-                    cout << endl;
-                }
-                break;
-
-            case 2:
-                tampilkanKontak();
-                break;
-
-            case 3:
-                cout << "Masukkan nama kontak yang akan dicari: ";
-                getline(cin, cariKontak);
-                cariData(cariKontak);
-                break;
-
-            case 4:
-                cout << "Masukkan nama kontak yang ingin diedit: ";
-                getline(cin, namaCari);
-                cout << "Masukkan nama baru: ";
-                getline(cin, namaBaru);
-                cout << "Masukkan nomor baru: ";
-                getline(cin, noTelBaru);
-                editKontak(namaCari, namaBaru, noTelBaru);
-                simpanKeFile();
-                break;
-
-            case 5:
-                cout << "Masukkan nama kontak yang ingin dihapus: ";
+        switch (pilihMenu)
+        {
+        case 1:
+            int jmlInput;
+            cout << "Masukkan jumlah kontak yang ingin ditambahkan: ";
+            cin >> jmlInput;
+            cin.ignore();
+            for (int i = 0; i < jmlInput; i++)
+            {
+                cout << "Masukkan nama kontak ke-" << (i + 1) << ": ";
                 getline(cin, nama);
-                hapusKontak(nama);
-                simpanKeFile();
-                break;
 
-            case 6:
-                int pilihSort;
-                cout << "===========================\n";
-                cout << "     Metode Pengurutan\n";
-                cout << "===========================\n";
-                cout << "1. Ascending\n";
-                cout << "2. Descending\n";
-                cout << "Pilih: ";
-                cin >> pilihSort;
-                cin.ignore();
+                do
+                {
+                    cout << "Masukkan nomor kontak ke-" << (i + 1) << " (max 12 digit, hanya angka): ";
+                    getline(cin, noTel);
+                    if (!validNoTel(noTel))
+                    {
+                        cout << "Nomor telepon tidak valid, coba lagi.\n";
+                    }
+                } while (!validNoTel(noTel));
 
-                system("cls");  
+                tambahKontak(nama, noTel);
+                tambahKeFile();
+                cout << endl;
+            }
+            break;
 
-                if (pilihSort == 1) {
-                    urutkanAscending();
-                    cout << "Kontak telah diurutkan secara ascending.\n";
-                } else if (pilihSort == 2) {
-                    urutkanDescending();
-                    cout << "Kontak telah diurutkan secara descending.\n";
-                } else {
-                    cout << "Pilihan tidak valid\n";
-                    break;
+        case 2:
+            tampilkanKontak();
+            break;
+
+        case 3:
+            cout << "Masukkan nama kontak yang akan dicari: ";
+            getline(cin, cariKontak);
+            cariData(cariKontak);
+            break;
+
+        case 4:
+            cout << "Masukkan nama kontak yang ingin diedit: ";
+            getline(cin, namaCari);
+            cout << "Masukkan nama baru: ";
+            getline(cin, namaBaru);
+            cout << "Masukkan nomor baru (max 12 digit, hanya angka): ";
+            do
+            {
+                getline(cin, noTelBaru);
+                if (!validNoTel(noTelBaru))
+                {
+                    cout << "Nomor telepon tidak valid, coba lagi.\n";
                 }
-                tampilkanKontak();
-                simpanKeFile();
-                break;
+            } while (!validNoTel(noTelBaru));
+            editKontak(namaCari, namaBaru, noTelBaru);
+            simpanKeFile();
+            break;
 
-            case 7:
-                simpanKeFile();
-                cout << "Terima kasih telah menggunakan program ini!\n";
-                return 0;
+        case 5:
+            cout << "Masukkan nama kontak yang ingin dihapus: ";
+            getline(cin, nama);
+            hapusKontak(nama);
+            simpanKeFile();
+            break;
 
-            default:
-                cout << "Menu tidak valid\n";
+        case 6:
+            int pilihSort;
+            cout << "===========================\n";
+            cout << "     Metode Pengurutan\n";
+            cout << "===========================\n";
+            cout << "1. Ascending\n";
+            cout << "2. Descending\n";
+            cout << "Pilih: ";
+            cin >> pilihSort;
+            cin.ignore();
+
+            system("cls");
+
+            if (pilihSort == 1)
+            {
+                urutkanAscending();
+            }
+            else if (pilihSort == 2)
+            {
+                urutkanDescending();
+            }
+            else
+            {
+                cout << "Pilihan tidak valid\n";
                 break;
+            }
+            tampilkanKontak();
+            simpanKeFile();
+            break;
+
+        case 7:
+            simpanKeFile();
+            cout << "Terima kasih telah menggunakan program ini!\n";
+            return 0;
+
+        default:
+            cout << "Menu tidak valid\n";
+            break;
         }
 
         system("pause");
