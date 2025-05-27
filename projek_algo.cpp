@@ -402,7 +402,7 @@ int main()
             cout << "Login gagal\n";
             return 0;
         } else{
-            break; // Keluar dari loop untuk masuk ke menu utama
+            break;
         }
         break;
 
@@ -433,7 +433,7 @@ int main()
         }
         else
         {
-            break; // Keluar dari loop untuk masuk ke menu utama
+            break;
         }
         break;
 
@@ -478,12 +478,12 @@ int main()
             cin.ignore();
             for (int i = 0; i < jmlInput; i++)
             {
-                cout << "Masukkan nama kontak ke-" << (i + 1) << ": ";
+                cout << "\nMasukkan nama kontak ke-" << (i + 1) << ": ";
                 getline(cin, nama);
 
                 do
                 {
-                    cout << "Masukkan nomor kontak ke-" << (i + 1) << " (max 12 digit, hanya angka): ";
+                    cout << "Masukkan nomor kontak ke-" << (i + 1) << " (max 12 digit): ";
                     getline(cin, noTel);
                     if (!validNoTel(noTel))
                     {
@@ -492,7 +492,7 @@ int main()
                 } while (!validNoTel(noTel));
 
                 tambahKontak(nama, noTel);
-                cout << "Kontak berhasil ditambahkan!\n";
+                cout << "Kontak berhasil ditambahkan!";
                 tambahKeFile();
                 cout << endl;
             }
@@ -511,9 +511,9 @@ int main()
         case 4:
             cout << "Masukkan nama kontak yang ingin diedit: ";
             getline(cin, namaCari);
-            cout << "Masukkan nama baru: ";
+            cout << "\nMasukkan nama baru: ";
             getline(cin, namaBaru);
-            cout << "Masukkan nomor baru (max 12 digit, hanya angka): ";
+            cout << "Masukkan nomor baru (max 12 digit): ";
             do
             {
                 getline(cin, noTelBaru);
