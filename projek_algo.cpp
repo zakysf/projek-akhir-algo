@@ -22,14 +22,14 @@ struct Node
     Node *prev, *next;
 };
 
-Node *awal, *akhir, *bantu, *list, *NB;
+Node *awal, *akhir, *bantu, *list, *NB; //Node untuk berbagai macam operasi linked list
 
 void registerAdmin()
 {
     admin newAdmin;
-    cout << "Masukkan nama admin: ";
+    cout << "Masukkan nama admin: "; //nama admin yang baru
     getline(cin, newAdmin.nama);
-    cout << "Masukkan PIN (angka): ";
+    cout << "Masukkan PIN (angka): "; //pin yang baru
     cin >> newAdmin.pin;
     cin.ignore();
 
@@ -40,7 +40,7 @@ void registerAdmin()
         return;
     }
 
-    fprintf(file, "%s|%d\n", newAdmin.nama.c_str(), newAdmin.pin);
+    fprintf(file, "%s|%d\n", newAdmin.nama.c_str(), newAdmin.pin); //masukkan info admin ke file admin.dat
     fclose(file);
     cout << "Admin berhasil diregistrasi!\n";
 }
@@ -57,7 +57,7 @@ string login(int adminInput)
     char nama[100];
     int pin;
 
-    while (fscanf(file, " %99[^|]|%d\n", nama, &pin) == 2)
+    while (fscanf(file, " %99[^|]|%d\n", nama, &pin) == 2) //mengambil data admin
     {
         if (adminInput == pin)
         {
@@ -70,56 +70,56 @@ string login(int adminInput)
     return "";
 }
 
-void listBaru()
+void listBaru() //fungsi membuat list baru
 {
     list = NULL;
     awal = list;
     akhir = list;
 }
 
-int listKosong()
+int listKosong() //fungsi cek list kosong
 {
     return (awal == NULL);
 }
 
-void tambahKontak(string namaBaru, string noTelBaru)
+void tambahKontak(string namaBaru, string noTelBaru) //fungsi menambah kontak
 {
-    NB = new Node;
-    NB->info.nama = namaBaru;
-    NB->info.noTel = noTelBaru;
+    NB = new Node; //deklarasi node baru
+    NB->info.nama = namaBaru; //nama baru disimpan dalam node
+    NB->info.noTel = noTelBaru; //no tel baru disimpan dalam node
     NB->next = NULL;
     NB->prev = NULL;
 
-    if (listKosong())
+    if (listKosong()) //jika list tidak ada atau kosong
     {
-        awal = akhir = NB;
+        awal = akhir = NB; //node baru akan menjadi list baru
     }
-    else if (awal->info.nama >= namaBaru)
+    else if (awal->info.nama >= namaBaru) //jika nilai node baru kurang dari node pertama
     {
         NB->next = awal;
         awal->prev = NB;
-        awal = NB;
+        awal = NB; //sisipkan node baru ke node pertama
     }
     else
     {
-        bantu = awal;
-        while (bantu->next != NULL && bantu->next->info.nama < namaBaru)
+        bantu = awal; //node awal disimpan dalam node bantu
+        while (bantu->next != NULL && bantu->next->info.nama < namaBaru) //selama nilai node belum kosong (null) dan info nama node yang selanjutnya masih lebih kecil nilainya dari nama yang baru diinput
         {
-            bantu = bantu->next;
+            bantu = bantu->next; //menulusuri semua node dari awal hingga akhir
         }
         NB->next = bantu->next;
-        if (bantu->next != NULL)
-            bantu->next->prev = NB;
-        NB->prev = bantu;
-        bantu->next = NB;
-        if (NB->next == NULL)
-            akhir = NB;
+        if (bantu->next != NULL) //jika selama ditelusuri, node tidak bernilai kosong
+            bantu->next->prev = NB; //bikin node baru
+        NB->prev = bantu; //menyisipkan node diantara bantu dan bantu->next
+        bantu->next = NB; //memastikan node bantu terhubung dengan NB
+        if (NB->next == NULL) //jika akhir node bernilai kosong
+            akhir = NB; //NB menjadi node akhir
     }
 }
 
 void tampilkanKontak()
 {
-    if (listKosong())
+    if (listKosong()) //memastikan list tidak kosong
     {
         cout << "Tidak ada kontak yang tersimpan!" << endl;
     }
@@ -136,25 +136,25 @@ void tampilkanKontak()
         {
             cout << left << setw(30) << bantu->info.nama << " | " << setw(15) << bantu->info.noTel << endl;
             bantu = bantu->next;
-        }
+        } //selama list belum bernilai kosong, lakukan print semua info node
         cout << "==============================================\n";
     }
 }
 
-void cariData(string cariNama)
+void cariData(string cariNama) //fungsi cari nama
 {
     bool ketemu = false;
     bantu = awal;
 
-    if (listKosong())
+    if (listKosong()) //memastikan list agar tidak kosong
     {
         cout << "Tidak ada kontak yang tersimpan!" << endl;
     }
     else
     {
-        while (bantu != NULL)
+        while (bantu != NULL) //selama node belum bernilai kosong
         {
-            if (bantu->info.nama == cariNama)
+            if (bantu->info.nama == cariNama) //bandingkan satu-satu semua node dengan nama yang dicari
             {
                 ketemu = true;
                 cout << "Nama Kontak : " << bantu->info.nama << endl;
@@ -163,16 +163,16 @@ void cariData(string cariNama)
             }
             bantu = bantu->next;
         }
-        if (!ketemu)
+        if (!ketemu) //jika tidak ketemu
         {
             cout << "Data tidak ditemukan\n";
         }
     }
 }
 
-void hapusKontak(string namaHapus, bool silent = false)
+void hapusKontak(string namaHapus, bool silent = false) //fungsi hapus kontak
 {
-    if (listKosong())
+    if (listKosong()) //memastikan list agar tidak kosong
     {
         if (!silent)
             cout << "Tidak ada kontak yang tersimpan!" << endl;
@@ -180,9 +180,9 @@ void hapusKontak(string namaHapus, bool silent = false)
     }
 
     bantu = awal;
-    while (bantu != NULL && bantu->info.nama != namaHapus)
+    while (bantu != NULL && bantu->info.nama != namaHapus) //selama node tidak sama dengan nama yang ingin dihapus, dan info dari node tidak kosong
     {
-        bantu = bantu->next;
+        bantu = bantu->next; //telusuri semua node pada list
     }
 
     if (bantu == NULL)
@@ -221,7 +221,7 @@ void hapusKontak(string namaHapus, bool silent = false)
     }
 }
 
-void editKontak(string namaCari, string namaBaru, string noTelBaru)
+void editKontak(string namaCari, string namaBaru, string noTelBaru) //fungsi edit kontak
 {
     system("cls");
     if (listKosong())
@@ -248,7 +248,7 @@ void editKontak(string namaCari, string namaBaru, string noTelBaru)
     }
 }
 
-void simpanKeFile()
+void simpanKeFile() //fungsi simpan data dari linked list ke file
 {
     FILE *file = fopen("kontak.txt", "w");
     if (!file)
@@ -267,7 +267,7 @@ void simpanKeFile()
     fclose(file);
 }
 
-void tambahKeFile()
+void tambahKeFile() //fungsi tambah data dari linked list ke file
 {
     FILE *file = fopen("kontak.txt", "a");
     if (!file)
@@ -286,7 +286,7 @@ void tambahKeFile()
     fclose(file);
 }
 
-void muatDariFile()
+void muatDariFile() //fungsi membaca data dari file ke linked list
 {
     FILE *file = fopen("kontak.txt", "r");
     if (!file)
@@ -303,7 +303,7 @@ void muatDariFile()
     fclose(file);
 }
 
-void urutkanAscending()
+void urutkanAscending() //fungsi mengurutkan data secara ascending
 {
     if (listKosong())
         return;
@@ -313,16 +313,16 @@ void urutkanAscending()
     {
         for (j = i->next; j != NULL; j = j->next)
         {
-            if (i->info.nama > j->info.nama)
+            if (i->info.nama > j->info.nama) //data dibandingkan dengan nama
             {
-                swap(i->info, j->info);
+                swap(i->info, j->info); //tukar data jika lebih besar
             }
         }
     }
     cout << "Kontak telah diurutkan secara ascending.\n";
 }
 
-void urutkanDescending()
+void urutkanDescending() //fungsi mengurutkan data secara descending
 {
     if (listKosong())
         return;
@@ -332,16 +332,16 @@ void urutkanDescending()
     {
         for (j = i->next; j != NULL; j = j->next)
         {
-            if (i->info.nama < j->info.nama)
+            if (i->info.nama < j->info.nama) //data dibandingkan dengan nama
             {
-                swap(i->info, j->info);
+                swap(i->info, j->info); //tukar data jika lebih kecil
             }
         }
     }
     cout << "Kontak telah diurutkan secara descending.\n";
 }
 
-bool validNoTel(string noTel)
+bool validNoTel(string noTel) //fungsi memvalidasi no tel agar tidak lebih dari 12 karakter
 {
     if (noTel.length() > 12)
         return false;
@@ -379,14 +379,14 @@ int main()
 
     switch (pilihMenuAwal)
     {
-    case 1:
-        for (int i = 0; i < 3; i++)
+    case 1: //login
+        for (int i = 0; i < 3; i++) //login memiliki 3 percobaan
         {
             cout << "Masukkan PIN anda (angka): ";
             cin >> adminInput;
             cin.ignore();
 
-            namaAdminLogin = login(adminInput);
+            namaAdminLogin = login(adminInput); //membandingkan nama admin yang ada dengan nama yang diinput
             if (namaAdminLogin == "")
             {
                 cout << "PIN Salah\n";
@@ -406,9 +406,9 @@ int main()
         }
         break;
 
-    case 2:
-        registerAdmin();
-        for (int i = 0; i < 3; i++)
+    case 2: //registrasi
+        registerAdmin(); //registrasi akun admin
+        for (int i = 0; i < 3; i++) //login kembali setelah register
         {
             cout << "Masukkan PIN anda (angka): ";
             cin >> adminInput;
@@ -437,7 +437,7 @@ int main()
         }
         break;
 
-    case 3:
+    case 3: //keluar program
         cout << "Keluar dari program.\n";
         return 0;
 
@@ -446,8 +446,8 @@ int main()
         return 0;
     }
 
-    listBaru();
-    muatDariFile();
+    listBaru(); //membuat list baru
+    muatDariFile(); //mengambil data kontak dari file
 
     while (true)
     {
@@ -471,7 +471,7 @@ int main()
 
         switch (pilihMenu)
         {
-        case 1:
+        case 1: //input kontak
             int jmlInput;
             cout << "Masukkan jumlah kontak yang ingin ditambahkan: ";
             cin >> jmlInput;
@@ -489,26 +489,26 @@ int main()
                     {
                         cout << "Nomor telepon tidak valid, coba lagi.\n";
                     }
-                } while (!validNoTel(noTel));
+                } while (!validNoTel(noTel)); //selama no tel tidak dalam batas karakter maksimal, ulang terus hingga valid
 
-                tambahKontak(nama, noTel);
+                tambahKontak(nama, noTel); //tambah kontak baru
                 cout << "Kontak berhasil ditambahkan!";
-                tambahKeFile();
+                tambahKeFile(); //tambah ke file
                 cout << endl;
             }
             break;
 
-        case 2:
-            tampilkanKontak();
+        case 2: //menampilkan kontak yang tersimpan
+            tampilkanKontak(); 
             break;
 
-        case 3:
+        case 3: //mencari kontak
             cout << "Masukkan nama kontak yang akan dicari: ";
             getline(cin, cariKontak);
             cariData(cariKontak);
             break;
 
-        case 4:
+        case 4: //mengedit data kontak
             cout << "Masukkan nama kontak yang ingin diedit: ";
             getline(cin, namaCari);
             cout << "\nMasukkan nama baru: ";
@@ -526,14 +526,14 @@ int main()
             simpanKeFile();
             break;
 
-        case 5:
+        case 5: //menghapus data kontak
             cout << "Masukkan nama kontak yang ingin dihapus: ";
             getline(cin, nama);
             hapusKontak(nama);
             simpanKeFile();
             break;
 
-        case 6:
+        case 6: //sorting kontak
             int pilihSort;
             cout << "===========================\n";
             cout << "     Metode Pengurutan\n";
@@ -546,11 +546,11 @@ int main()
 
             system("cls");
 
-            if (pilihSort == 1)
+            if (pilihSort == 1) //sorting ascending
             {
                 urutkanAscending();
             }
-            else if (pilihSort == 2)
+            else if (pilihSort == 2) //sorting descending
             {
                 urutkanDescending();
             }
@@ -563,16 +563,16 @@ int main()
             simpanKeFile();
             break;
 
-        case 7:
+        case 7: //keluar program
             simpanKeFile();
             cout << "Terima kasih telah menggunakan program ini!\n";
             return 0;
 
-        default:
+        default: //error handling jika input tidak sesuai dari 1 - 7
             cout << "Menu tidak valid\n";
             break;
         }
 
-        system("pause");
+        system("pause"); //pause program sebelum lanjut
     }
 }
