@@ -22,7 +22,7 @@ struct Node
     Node *prev, *next;
 };
 
-Node *awal, *akhir, *bantu, *list, *NB; //Node untuk berbagai macam operasi linked list
+Node *awal, *akhir, *bantu, *list, *NB; //node untuk berbagai macam operasi linked list
 
 void registerAdmin()
 {
@@ -170,52 +170,55 @@ void cariData(string cariNama) //fungsi cari nama
     }
 }
 
-void hapusKontak(string namaHapus, bool silent = false) //fungsi hapus kontak
+void hapusKontak(string namaHapus, bool silent = false) //fungsi untuk menghapus kontak berdasarkan nama yang diberikan
 {
-    if (listKosong()) //memastikan list agar tidak kosong
+    if (listKosong()) //cek apakah linked list kosong (tidak ada kontak sama sekali)
     {
-        if (!silent)
+        if (!silent) //jika mode tidak silent, tampilkan pesan
             cout << "Tidak ada kontak yang tersimpan!" << endl;
-        return;
+        return; //keluar fungsi karena tidak ada kontak yang bisa dihapus
     }
 
-    bantu = awal;
-    while (bantu != NULL && bantu->info.nama != namaHapus) //selama node tidak sama dengan nama yang ingin dihapus, dan info dari node tidak kosong
+    bantu = awal; //mulai pencarian dari node awal linked list
+    //telusuri linked list selama belum sampai akhir dan nama pada node tidak sama dengan nama yang ingin dihapus
+    while (bantu != NULL && bantu->info.nama != namaHapus)
     {
-        bantu = bantu->next; //telusuri semua node pada list
+        bantu = bantu->next;
     }
 
-    if (bantu == NULL)
+    if (bantu == NULL) //jika sampai akhir linked list tapi kontak tidak ditemukan
     {
         if (!silent)
-            cout << "Kontak tidak ditemukan!" << endl;
-        return;
+            cout << "Kontak tidak ditemukan!" << endl; //tampilkan pesan jika tidak dalam mode silent
+        return; //keluar fungsi karena kontak tidak ada
     }
 
-    if (bantu == awal && bantu == akhir)
+    //jika kontak ditemukan, lakukan penghapusan dengan memperhatikan posisi node:
+    if (bantu == awal && bantu == akhir) //jika hanya ada satu node di list (awal dan akhir sama)
     {
-        awal = akhir = NULL;
+        awal = akhir = NULL; //set list menjadi kosong
     }
-    else if (bantu == awal)
+    else if (bantu == awal) //jika node yang dihapus adalah node pertama
     {
-        awal = bantu->next;
+        awal = bantu->next; //geser pointer awal ke node berikutnya
         if (awal)
-            awal->prev = NULL;
+            awal->prev = NULL; //node baru awal tidak punya prev (null)
     }
-    else if (bantu == akhir)
+    else if (bantu == akhir) //jika node yang dihapus adalah node terakhir
     {
-        akhir = bantu->prev;
+        akhir = bantu->prev; //geser pointer akhir ke node sebelumnya
         if (akhir)
-            akhir->next = NULL;
+            akhir->next = NULL; //node baru akhir tidak punya next (null)
     }
-    else
+    else //jika node berada di tengah list
     {
-        bantu->prev->next = bantu->next;
-        bantu->next->prev = bantu->prev;
+        bantu->prev->next = bantu->next; //hubungkan node sebelumnya ke node setelahnya
+        bantu->next->prev = bantu->prev; //hubungkan node setelahnya ke node sebelumnya
     }
 
-    delete bantu;
-    if (!silent)
+    delete bantu; //hapus node dari memori
+
+    if (!silent) //jika mode tidak silent, tampilkan pesan sukses
     {
         cout << "Kontak berhasil dihapus!" << endl;
     }
@@ -295,8 +298,8 @@ void muatDariFile() //fungsi membaca data dari file ke linked list
     char nama[100], noTel[13];
     while (fscanf(file, " %99[^|] | %12[^\n]\n", nama, noTel) == 2)
     {
-        string namaStr(nama);
-        string noTelStr(noTel);
+        string namaStr(nama); //konversi array char nama ke string C++
+        string noTelStr(noTel); //konversi array char noTel ke string C++
         tambahKontak(namaStr, noTelStr);
     }
 
@@ -341,20 +344,22 @@ void urutkanDescending() //fungsi mengurutkan data secara descending
     cout << "Kontak telah diurutkan secara descending.\n";
 }
 
-bool validNoTel(string noTel) //fungsi memvalidasi no tel agar tidak lebih dari 12 karakter
+bool validNoTel(string noTel) // fungsi memvalidasi no tel agar tidak lebih dari 12 karakter
 {
-    if (noTel.length() > 12)
+    if (noTel.length() > 12) // jika no tel melebihi 12 digit maka false
         return false;
 
+    // Perulangan untuk memeriksa setiap karakter dalam string noTel
     for (int i = 0; i < (int)noTel.length(); i++)
     {
-        char c = noTel[i];
-        if (!(c >= '0' && c <= '9'))
+        char c = noTel[i]; // ambil karakter ke-i dari string
+        if (!(c >= '0' && c <= '9')) // jika karakter bukan angka (bukan antara '0' sampai '9')
         {
-            return false;
+            return false; // maka kembalikan false karena tidak valid
         }
     }
-    return true;
+
+    return true; // jika semua karakter adalah angka dan panjangnya valid, kembalikan true
 }
 
 int main()
@@ -380,7 +385,7 @@ int main()
     switch (pilihMenuAwal)
     {
     case 1: //login
-        for (int i = 0; i < 3; i++) //login memiliki 3 percobaan
+        for (int percobaan = 3; percobaan > 0; percobaan--) //login memiliki 3 percobaan
         {
             cout << "Masukkan PIN anda (angka): ";
             cin >> adminInput;
@@ -390,6 +395,7 @@ int main()
             if (namaAdminLogin == "")
             {
                 cout << "PIN Salah\n";
+                cout << "Kesempatan tersisa: " << percobaan-1 << "\n";
             }
             else
             {
@@ -408,7 +414,7 @@ int main()
 
     case 2: //registrasi
         registerAdmin(); //registrasi akun admin
-        for (int i = 0; i < 3; i++) //login kembali setelah register
+        for (int percobaan = 3; percobaan > 0; percobaan--) //login kembali setelah register
         {
             cout << "Masukkan PIN anda (angka): ";
             cin >> adminInput;
@@ -418,6 +424,7 @@ int main()
             if (namaAdminLogin == "")
             {
                 cout << "PIN Salah\n";
+                cout << "Kesempatan tersisa: " << percobaan-1 << "\n";
             }
             else
             {
@@ -462,7 +469,8 @@ int main()
         cout << " 4. Edit kontak\n";
         cout << " 5. Hapus kontak\n";
         cout << " 6. Urutkan kontak\n";
-        cout << " 7. Keluar\n";
+        cout << " 7. Logout\n";
+        cout << " 8. Keluar Program\n";
         cout << "===========================\n";
         cout << " Pilih menu: ";
         cin >> pilihMenu;
@@ -538,8 +546,9 @@ int main()
             cout << "===========================\n";
             cout << "     Metode Pengurutan\n";
             cout << "===========================\n";
-            cout << "1. Ascending\n";
-            cout << "2. Descending\n";
+            cout << " 1. Ascending\n";
+            cout << " 2. Descending\n";
+            cout << "===========================\n";
             cout << "Pilih: ";
             cin >> pilihSort;
             cin.ignore();
@@ -560,10 +569,13 @@ int main()
                 break;
             }
             tampilkanKontak();
-            simpanKeFile();
             break;
+    
+        case 7: //logout
+            main();
+            return 0;
 
-        case 7: //keluar program
+        case 8: //keluar program
             simpanKeFile();
             cout << "Terima kasih telah menggunakan program ini!\n";
             return 0;
@@ -572,7 +584,6 @@ int main()
             cout << "Menu tidak valid\n";
             break;
         }
-
-        system("pause"); //pause program sebelum lanjut
+        system("pause");
     }
 }
